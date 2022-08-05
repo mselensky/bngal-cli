@@ -26,4 +26,4 @@ elif [[ "$OSTYPE" == "win"* ]]; then
 fi 
 
 # 4. install necessary R packages
-Rscript R/install-r-pkgs.R
+Rscript R/install-R-pkgs.R
