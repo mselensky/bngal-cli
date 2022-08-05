@@ -3,7 +3,7 @@
 #### bngal setup script ####
 
 # 1. create conda environment and install system libraries
-conda create -n bngal -c conda-forge nlopt pandoc r=4.1
+conda create -n bngal -c conda-forge nlopt pandoc r=4.1 -y
 conda activate bngal
 
 # 2. export github directory as bngal variable for downstream scripts
