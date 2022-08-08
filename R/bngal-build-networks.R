@@ -95,7 +95,8 @@ __________________________________________________________
 # load packages
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(dplyr))
-pacman::p_load(parallel, tidyr, plyr, Hmisc, RColorBrewer, igraph,
+pacman::p_load(parallel, tidyr, #plyr,
+               Hmisc, RColorBrewer, igraph,
                visNetwork, ggpubr, grid, gridExtra, plotly,
                purrr, viridis, optparse)
 if (!require("bngal")) pacman::p_install_gh("mselensky/bngal")
@@ -158,6 +159,7 @@ for (tax_level in tax_levels) {
                                     direction = direction,
                                     cutoff.val = cutoff.val,
                                     compositional = FALSE)
+  message(" | [", Sys.time(), "] bin_taxonomy() complete")
   t1=Sys.time()
 
   prepared_data <- bngal::prepare_network_data(
@@ -165,6 +167,7 @@ for (tax_level in tax_levels) {
     meta.data = metadata,
     corr.cols = corr_cols,
     sub.comms = sub.comm.column)
+  message(" | [", Sys.time(), "] prepare_network_data() complete")
   t2<-Sys.time()
 
   pw.out <- file.path(out.dr, paste0("pairwise-summaries"))
@@ -176,12 +179,14 @@ for (tax_level in tax_levels) {
     out.dr = pw.out,
     transformation = transformation
   )
+  message(" | [", Sys.time(), "] prepare_corr_data() complete")
 
   t3=Sys.time()
   corr_matrix <- bngal::corr_matrix(
     filtered.matrix = corr_data,
     correlation = correlation
   )
+  message(" | [", Sys.time(), "] corr_matrix() complete")
 
   t4=Sys.time()
 
@@ -190,6 +195,7 @@ for (tax_level in tax_levels) {
     prepared.data = prepared_data,
     corr.matrix = corr_matrix
   )
+  message(" | [", Sys.time(), "] get_node_ids() complete")
 
   t5=Sys.time()
   edges <- generate_edges(
@@ -197,6 +203,7 @@ for (tax_level in tax_levels) {
     correlation = correlation,
     node.ids = node_ids
   )
+  message(" | [", Sys.time(), "] generate_edges() complete")
 
   t6=Sys.time()
   # filter for positive, negative, or all correlations
@@ -208,24 +215,28 @@ for (tax_level in tax_levels) {
     correlation.cutoff = correlation_cutoff,
     sign = sign
   )
+  message(" | [", Sys.time(), "] prepro_net_features() complete")
 
   t7=Sys.time()
 
   igraph_list <- bngal::get_igraph(
     prepro.data = prepro_data
   )
+  message(" | [", Sys.time(), "] get_igraph() complete")
 
   t8=Sys.time()
 
   ebcs <- bngal::get_edge_betweenness(
     igraph_list
   )
+  message(" | [", Sys.time(), "] get_edge_betweenness() complete")
 
   t9 <- Sys.time()
   # extract edge betweenness membership ids for each node id
   members <- bngal::get_ebc_member_ids(
     ebcs
   )
+  message(" | [", Sys.time(), "] get_ebc_member_ids() complete")
   t10 <- Sys.time()
   #
   clusters <- bngal::get_ebc_clusters(
@@ -234,14 +245,22 @@ for (tax_level in tax_levels) {
     igraph_list,
     sign
   )
+  message(" | [", Sys.time(), "] get_ebc_clusters() complete")
   t11 <- Sys.time()
   # prepare node data for plotting
   node_color_data <- bngal::color_nodes(
     binned.tax = binned_tax,
     clusters.to.color = clusters
   )
-
+  message(" | [", Sys.time(), "] color_nodes() complete")
   t12 <- Sys.time()
+
+  out.dr.plot = file.path(out.dr, graph_layout, tax_level)
+  if (!dir.exists(out.dr.plot)) dir.create(out.dr.plot, recursive = TRUE)
+  message(" | parent directory path: ", out.dr)
+  message(" | plot output directory path: ", out.dr.plot)
+  message(" | files in parent output directory: ", paste0(shQuote(list.files(out.dr)), collapse = ", "))
+  message(" | files in plot output directory: ", paste0(shQuote(list.files(out.dr.plot)), collapse = ", "))
 
   if (tax_level %in% c("family", "genus", "asv")) {
     # add color scheme from functional groupings inspired by Brankovits et al. (2017)
@@ -249,7 +268,7 @@ for (tax_level in tax_levels) {
       node.color.data = node_color_data,
       selected.By = "other",
       graph.layout = graph_layout,
-      out.dr = file.path(out.dr, graph_layout, tax_level),
+      out.dr = out.dr.plot,
       sign = sign,
       direction = direction,
       cutoff.val = cutoff.val,
@@ -264,18 +283,19 @@ for (tax_level in tax_levels) {
       node.color.data = node_color_data,
       selected.By = selected_By,
       graph.layout = graph_layout,
-      out.dr = file.path(out.dr, graph_layout, tax_level),
+      out.dr = out.dr.plot,
       sign = sign,
       direction = direction,
       cutoff.val = cutoff.val,
       pval.cutoff = pval.cutoff
     )
   }
+  message(" | [", Sys.time(), "] plot_networks() complete")
   t13 <- Sys.time()
 
   # export network data
   # create output directory for exported network data
-  out.dr.nd = paste0(file.path(out.dr, "network-data"))
+  out.dr.nd = file.path(out.dr, "network-data")
   if (!dir.exists(out.dr.nd)) dir.create(out.dr.nd, recursive = TRUE)
 
   bngal::export_network_data(
@@ -283,6 +303,7 @@ for (tax_level in tax_levels) {
     tax.level = tax_level,
     out.dr = out.dr.nd
   )
+  message(" | [", Sys.time(), "] export_network_data() complete")
   t14 <- Sys.time()
 
   message(
