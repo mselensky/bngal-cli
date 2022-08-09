@@ -24,5 +24,4 @@ BiocManager::install("treeio")
 BiocManager::install("ggtree")
 
 message(" | ", Sys.time(), " Installing bngal R package from GitHub...")
-
 pacman::p_install_gh("mselensky/bngal")

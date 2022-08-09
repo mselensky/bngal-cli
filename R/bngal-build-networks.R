@@ -61,7 +61,7 @@ if (is.null(opt$asv_table) | is.null(opt$metadata) | is.null(opt$output)){
   stop("[", Sys.time(), "] At least one required argument is missing. See help above for more information.")
 }
 
-logfile_name = paste0(opt$output, "/", "bngal-build-networks.log")
+logfile_name = file.path(opt$output, "bngal-build-networks.log")
 msg <- file(logfile_name, open = "a")
 sink(file = msg,
      append = FALSE,
@@ -257,10 +257,6 @@ for (tax_level in tax_levels) {
 
   out.dr.plot = file.path(out.dr, graph_layout, tax_level)
   if (!dir.exists(out.dr.plot)) dir.create(out.dr.plot, recursive = TRUE)
-  message(" | parent directory path: ", out.dr)
-  message(" | plot output directory path: ", out.dr.plot)
-  message(" | files in parent output directory: ", paste0(shQuote(list.files(out.dr)), collapse = ", "))
-  message(" | files in plot output directory: ", paste0(shQuote(list.files(out.dr.plot)), collapse = ", "))
 
   if (tax_level %in% c("family", "genus", "asv")) {
     # add color scheme from functional groupings inspired by Brankovits et al. (2017)
