@@ -21,23 +21,27 @@ export bngal=`pwd`
 
 if [[ "$OSTYPE" == "darwin"* ]] || [[ "$OSTYPE" == "linux-gnu"* ]]; then
 
-	alias_name="alias bngal-build-nets='Rscript --vanilla ${bngal}/R/bngal-build-networks.R'"
+	alias_name1="alias bngal-build-nets='Rscript --vanilla ${bngal}/R/bngal-build-networks.R'"
+	alias_name2="alias bngal-summarize-nets='Rscript --vanilla ${bngal}/R/bngal-summarize-networks.R'"
 
 	# output depends on zsh shell or bash
 	if [[ "$SHELL" == "/bin/zsh" && $(grep ${alias_name} ~/.zshrc | wc -l | xargs) == 0 ]]
 	then
-		echo ${alias_name} >> ~/.zshrc
+		echo ${alias_name1} >> ~/.zshrc
+		echo ${alias_name2} >> ~/.zshrc
 		source ~/.zshrc
 	elif [[ "$SHELL" == "/bin/bash" && $(grep ${alias_name} ~/.bashrc | wc -l | xargs) == 0 ]]
 	then
-		echo ${alias_name} >> ~/.bashrc
+		echo ${alias_name1} >> ~/.bashrc
+		echo ${alias_name2} >> ~/.bashrc
 		source ~/.bashrc
 	fi
 
 # if Windows, append to bash shell (cli tool not supported in other shells)
 elif [[ "$OSTYPE" == "win"* ]]; then
 	windows_path="C:\Program Files\Git\bin\bash.exe"
-	echo "alias bngal-build-nets='Rscript --vanilla ${bngal}/R/bngal-build-networks.R'" >> $windows_path
+	echo ${alias_name1} >> $windows_path
+	echo ${alias_name2} >> $windows_path
 fi 
 
 conda activate bngal
