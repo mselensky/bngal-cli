@@ -215,6 +215,12 @@ for (tax_level in tax_levels) {
     correlation.cutoff = correlation_cutoff,
     sign = sign
   )
+  # export final QC'd pairwise summary data to "pairwise-summary" output subfolder
+  pw_summary(binned.taxonomy = binned_tax,
+             preprocessed.features = prepro_data,
+             out.dr = out.dr,
+             cores=NCORES)
+
   message(" | [", Sys.time(), "] prepro_net_features() complete")
 
   t7=Sys.time()
