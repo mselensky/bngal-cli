@@ -124,6 +124,7 @@ if (!is.null(corr_cols)) {
 }
 obs.cutoff = opt$obs_threshold
 graph_layout = opt$graph_layout
+NCORES = opt$cores
 
 tax_levels = c("phylum", "class", "order", "family", "genus", "asv")
 
@@ -261,16 +262,16 @@ for (tax_level in tax_levels) {
   message(" | [", Sys.time(), "] color_nodes() complete")
   t12 <- Sys.time()
 
-  out.dr.plot = file.path(out.dr, graph_layout, tax_level)
-  if (!dir.exists(out.dr.plot)) dir.create(out.dr.plot, recursive = TRUE)
+  # out.dr.plot = file.path(out.dr, "network-plots", tax_level)
+  # if (!dir.exists(out.dr.plot)) dir.create(out.dr.plot, recursive = TRUE)
 
   if (tax_level %in% c("family", "genus", "asv")) {
     # add color scheme from functional groupings inspired by Brankovits et al. (2017)
-    bngal::plot_networks(
+    plot_networks(
       node.color.data = node_color_data,
-      selected.By = "other",
+      filled.by = "other",
       graph.layout = graph_layout,
-      out.dr = out.dr.plot,
+      out.dr = out.dr,
       sign = sign,
       direction = direction,
       cutoff.val = cutoff.val,
@@ -281,11 +282,11 @@ for (tax_level in tax_levels) {
 
   # plot networks
   for (selected_By in c("phylum", "edge_btwn_cluster")) {
-    bngal::plot_networks(
+    plot_networks(
       node.color.data = node_color_data,
-      selected.By = selected_By,
+      filled.by = selected_By,
       graph.layout = graph_layout,
-      out.dr = out.dr.plot,
+      out.dr = out.dr,
       sign = sign,
       direction = direction,
       cutoff.val = cutoff.val,
