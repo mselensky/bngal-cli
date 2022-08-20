@@ -2,26 +2,21 @@
 
 #### bngal setup script ####
 
-# 1. create conda environment and install system libraries
+# 1. create bngal conda environment
+conda env create -f bngal.yml
 
-# for macOS
-conda create -n bngal -y
-conda config --add channels defaults
-conda config --add channels r 
-conda config --add channels bioconda
-conda config --add channels conda-forge
-conda install -n bngal cmake nlopt pandoc=2.18 zlib r=4.1 r-hmisc r-fs r-rcpp r-sparsem r-igraph r-rcppeigen r-tidyverse r-rcolorbrewer r-visnetwork r-vegan r-purrr r-optparse r-ggpubr r-gridextra r-plotly r-ggrepel r-viridis r-igraph -y
-source activate bngal
+# export Rscript pipelines to bngal bin
+cp R/bngal-build-networks.R ${CONDA_PREFIX}/bin/bngal-build-networks.R 
+cp R/bngal-summarize-networks.R ${CONDA_PREFIX}/bin/bngal-summarize-networks.R 
+
+# save as aliases
+alias_name1="alias bngal-build-nets='Rscript --vanilla ${CONDA_PREFIX}/bin/bngal-build-networks.R'"
+alias_name2="alias bngal-summarize-nets='Rscript --vanilla ${CONDA_PREFIX}/bin/bngal-summarize-networks.R'"
 
 # 2. export github directory as bngal variable for downstream aliases
 export bngal=`pwd`
 
-# 3. add bngal Rscripts to user shell profiles
-# if macOS or linux, append to either zsh or bash shell:
-
-alias_name1="alias bngal-build-nets='Rscript --vanilla ${bngal}/R/bngal-build-networks.R'"
-alias_name2="alias bngal-summarize-nets='Rscript --vanilla ${bngal}/R/bngal-summarize-networks.R'"
-
+# 3. add bngal aliases to user shell profiles
 if [[ "$OSTYPE" == "darwin"* ]] || [[ "$OSTYPE" == "linux-gnu"* ]]; then
 	
 	# output depends on zsh shell or bash
@@ -43,9 +38,10 @@ elif [[ "$OSTYPE" == "win"* ]]; then
 	echo ${alias_name2} >> $windows_path
 
 else 
-	echo "Error: OS not supported"
+	echo "Error: OS not supported :("
 fi
 
 source activate bngal
-# 4. install necessary R packages and write output to file
+
+# 4. double check R package depedency installations and install bngal R package from GitHub
 Rscript --vanilla R/install-R-pkgs.R > R-pkgs-install.log

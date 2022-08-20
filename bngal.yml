@@ -1,0 +1,33 @@
+name: bngal
+channels:
+  - conda-forge
+  - bioconda
+  - r
+  - defaults
+dependencies:
+  - nlopt
+  - bioconductor-ggtree
+  - bioconductor-treeio
+  - r-rcolorbrewer
+  - r-tidyverse
+  - r-ape
+  - r-plotly
+  - r-rcppeigen
+  - r-fs
+  - r-igraph
+  - r-hmisc
+  - r-gridextra
+  - r=4.1
+  - r-rcpp
+  - r-optparse
+  - r-ggpubr
+  - r-sparsem
+  - r-pacman
+  - pandoc=2.18
+  - cmake
+  - r-ggrepel
+  - r-visnetwork
+  - r-vegan
+  - r-purrr
+  - zlib
+  - r-viridis
