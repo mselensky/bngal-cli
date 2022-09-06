@@ -207,8 +207,8 @@ for (tax_level in tax_levels) {
   message(" | [", Sys.time(), "] generate_edges() complete")
 
   t6=Sys.time()
-  # filter for positive, negative, or all correlations
-  prepro_data <- bngal::prepro_net_features(
+  # filter for positive, negative, or all correlations within defined pval/correlation coefficient cutoffs
+  prepro_data <- bngal::prepare_net_features(
     edges. = edges,
     node.ids = node_ids,
     p.val.cutoff = pval.cutoff,
@@ -217,8 +217,9 @@ for (tax_level in tax_levels) {
     sign = sign
   )
   # export final QC'd pairwise summary data to "pairwise-summary" output subfolder
-  pw_summary(binned.taxonomy = binned_tax,
+  pw_summary(corr.data = corr_data,
              preprocessed.features = prepro_data,
+             tax.level = tax_level,
              out.dr = out.dr,
              cores=NCORES)
 
@@ -401,11 +402,10 @@ for (tax_level in tax_levels) {
                                               tax_level, "_",
                                               opt$cores, "cores_",
                                               "runtime-table.csv"))
-                                  ))
+  ))
 
   message(" | [", Sys.time(), "] ", tax_level, "-level networks complete.")
 
 
 }
 closeAllConnections()
-

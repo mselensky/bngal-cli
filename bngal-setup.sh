@@ -5,6 +5,8 @@
 # 1. create bngal conda environment
 conda env create -f bngal.yml
 
+source activate bngal
+
 # export Rscript pipelines to bngal bin
 cp R/bngal-build-networks.R ${CONDA_PREFIX}/bin/bngal-build-networks.R 
 cp R/bngal-summarize-networks.R ${CONDA_PREFIX}/bin/bngal-summarize-networks.R 
@@ -13,10 +15,7 @@ cp R/bngal-summarize-networks.R ${CONDA_PREFIX}/bin/bngal-summarize-networks.R
 alias_name1="alias bngal-build-nets='Rscript --vanilla ${CONDA_PREFIX}/bin/bngal-build-networks.R'"
 alias_name2="alias bngal-summarize-nets='Rscript --vanilla ${CONDA_PREFIX}/bin/bngal-summarize-networks.R'"
 
-# 2. export github directory as bngal variable for downstream aliases
-export bngal=`pwd`
-
-# 3. add bngal aliases to user shell profiles
+# add bngal aliases to user shell profiles
 if [[ "$OSTYPE" == "darwin"* ]] || [[ "$OSTYPE" == "linux-gnu"* ]]; then
 	
 	# output depends on zsh shell or bash
