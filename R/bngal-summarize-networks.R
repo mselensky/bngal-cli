@@ -74,7 +74,7 @@ asv.table = opt$asv_table
 metadata = read_csv(opt$metadata, col_types = cols())
 asv_table = read_csv(asv.table, col_types = cols()) %>%
   filter(`sample-id` %in% unique(metadata$`sample-id`))
-sub.comms=opt$subnetworks
+sub.comm.column=opt$subnetworks
 out.dr = opt$output
 ebc.comp.fill = opt$fill_ebc_by
 metadata.cols = ebc.comp.fill
@@ -90,17 +90,6 @@ if (!dir.exists(out.dr.core)) dir.create(out.dr.core, recursive = TRUE)
 # load network data from bngal-build-nets
 network_data <- bngal::load_network_data(network_dir)
 message(" | [", Sys.time(), "] Network data imported from:\n |   * ", network_dir)
-
-# get number of cores
-# if (Sys.getenv("SLURM_NTASKS") > 1) {
-#   NCORES = Sys.getenv("SLURM_NTASKS")
-# } else if (parallel::detectCores() > 2) {
-#   NCORES = parallel::detectCores()-1
-#   # only reserve cores for each level of taxonomic classification to run in parallel
-#   if (NCORES > length(tax.levels)) NCORES = as.numeric(length(tax.levels))
-# } else {
-#   NCORES = 1
-# }
 
 # bin taxonomy at each level of classification
 binned_tax <- parallel::mclapply(X = tax.levels,
@@ -130,7 +119,7 @@ ebc_comps <- parallel::mclapply(X = tax.levels,
                                                           tax.level = i,
                                                           metadata = metadata,
                                                           metadata.cols = ebc.comp.fill,
-                                                          sub.comms = sub.comms)
+                                                          sub.comms = sub.comm.column)
                                 },
                                 mc.cores = NCORES)
 names(ebc_comps) = tax.levels
@@ -141,23 +130,23 @@ if (!dir.exists(out.dr.taxa.bp)) dir.create(out.dr.taxa.bp, recursive = TRUE)
 
 for (i in tax.levels) {
   core_comps <- bngal::plot_core_comp(ebc_comps, i, metadata, fill.by = ebc.comp.fill)
-  ggplot2::ggsave(file.path(out.dr.core, paste0(i, "-filled.by-", ebc.comp.fill, ".pdf")),
-                  core_comps,
-                  device = "pdf")
+  suppressMessages(
+    ggplot2::ggsave(file.path(out.dr.core, paste0(i, "-filled.by-", ebc.comp.fill, ".pdf")),
+                    core_comps,
+                    device = "pdf")
+  )
 }
 message(" | [", Sys.time(), "] EBC composition plots exported to\n |   * ", out.dr.core)
 
 # output summary data for each level of taxonomic classification
-parallel::mclapply(X = tax.levels,
-                   FUN = function(x){
-                     suppressMessages(
-                       bngal::export_ebc_taxa_summary(binned.taxonomy = binned_tax,
-                                                      ebc.nodes.abun = ebc_comps,
-                                                      tax.level = x,
-                                                      out.dr = out.dr)
-                     )
-                   },
-                   mc.cores = NCORES)
+out <- parallel::mclapply(X = tax.levels,
+                          FUN = function(x){
+                            bngal::export_ebc_taxa_summary(binned.taxonomy = binned_tax,
+                                                           ebc.nodes.abun = ebc_comps,
+                                                           tax.level = x,
+                                                           out.dr = out.dr)
+                            },
+                          mc.cores = NCORES)
 message(" | [", Sys.time(), "] EBC and taxonomic abundance data exported to\n |   * ", file.path(out.dr, "network-summary-tables"))
 Sys.sleep(3)
 
@@ -165,79 +154,36 @@ dendros <- bngal::build_dendrograms(binned.taxonomy = binned_tax,
                                     metadata = metadata,
                                     color.by = ebc.comp.fill,
                                     trans = "log10",
-                                    sub.comms = sub.comms)
+                                    sub.comms = sub.comm.column)
 message(" | [", Sys.time(), "] Dendrograms constructed")
 
 Sys.sleep(3)
 
-# parallel::mclapply(X = tax.levels,
-#                    FUN = function(i){
-#                      bngal::build_taxa.barplot(plotdata = ebc_comps,
-#                                                tax.level = i,
-#                                                dendrogram = dendros,
-#                                                fill.by = "phylum",
-#                                                interactive = F,
-#                                                out.dr = out.dr,
-#                                                metadata.cols = metadata.cols)
-#                    },
-#                    mc.cores = NCORES)
-
 for (i in tax.levels) {
-build_taxa.barplot(plotdata = ebc_comps,
-                   tax.level = i,
-                   dendrogram = dendros,
-                   fill.by = "phylum",
-                   interactive = opt$interactive,
-                   out.dr = out.dr,
-                   metadata.cols = metadata.cols)
+  for (x in c("phylum", "ebc")) {
+    suppressWarnings(
+      build_taxa.barplot(plotdata = ebc_comps,
+                         tax.level = i,
+                         dendrogram = dendros,
+                         fill.by = x,
+                         interactive = opt$interactive,
+                         out.dr = out.dr,
+                         metadata.cols = metadata.cols)
+    )
+  }
 }
-
-Sys.sleep(3)
-
-# parallel::mclapply(X = tax.levels,
-#                    FUN = function(i){
-#                      bngal::build_taxa.barplot(plotdata = ebc_comps,
-#                                                tax.level = i,
-#                                                dendrogram = dendros,
-#                                                fill.by = "ebc",
-#                                                interactive = F,
-#                                                out.dr = out.dr,
-#                                                metadata.cols = metadata.cols)
-#                    },
-#                    mc.cores = NCORES)
-
-for (i in tax.levels) {
-build_taxa.barplot(plotdata = ebc_comps,
-                   tax.level = i,
-                   dendrogram = dendros,
-                   fill.by = "ebc",
-                   interactive = opt$interactive,
-                   out.dr = out.dr,
-                   metadata.cols = metadata.cols)
-}
-
-Sys.sleep(3)
-
-# parallel::mclapply(X = tax.levels,
-#                    FUN = function(i){
-#                      bngal::build_taxa.barplot(plotdata = ebc_comps,
-#                                                tax.level = i,
-#                                                dendrogram = dendros,
-#                                                fill.by = "grouping",
-#                                                interactive = F,
-#                                                out.dr = out.dr,
-#                                                metadata.cols = metadata.cols)
-#                    },
-#                    mc.cores = NCORES)
 
 for (i in c("family", "genus", "asv")) {
-build_taxa.barplot(plotdata = ebc_comps,
-                   tax.level = i,
-                   dendrogram = dendros,
-                   fill.by = "grouping",
-                   interactive = opt$interactive,
-                   out.dr = out.dr,
-                   metadata.cols = metadata.cols)
+  suppressWarnings(
+    build_taxa.barplot(plotdata = ebc_comps,
+                       tax.level = i,
+                       dendrogram = dendros,
+                       fill.by = "grouping",
+                       interactive = opt$interactive,
+                       out.dr = out.dr,
+                       metadata.cols = metadata.cols)
+    )
 }
 
-Sys.sleep(3)
+out.dr.taxa.bp = file.path(out.dr, "taxa-barplots")
+message(" | [", Sys.time(), "] Exported summary barplots to:\n |   ", file.path(out.dr.taxa.bp))
