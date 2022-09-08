@@ -408,4 +408,5 @@ for (tax_level in tax_levels) {
 
 
 }
+message(" | [", Sys.time(), "] bngal-build-nets complete!")
 closeAllConnections()

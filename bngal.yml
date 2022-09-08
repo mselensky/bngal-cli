@@ -5,30 +5,30 @@ channels:
   - r
   - defaults
 dependencies:
-  - bioconductor-ggtree
-  - r-hmisc
-  - r-rcpp
-  - r-sparsem
-  - r-plotly
-  - r-tidyverse
-  - r-rcppeigen
-  - r-ggrepel
-  - r-scales
-  - r-visnetwork
-  - pandoc=2.18
-  - r-igraph
-  - r-fs
-  - r-ggpubr
-  - r-purrr
-  - cmake
-  - r-gridextra
-  - r-ape
-  - r=4.1
-  - r-rcolorbrewer
   - nlopt
   - r-viridis
+  - r-hmisc
+  - r-rcolorbrewer
+  - r-scales
+  - pandoc=2.18
+  - r-ggpubr
   - zlib
-  - r-pacman
-  - r-vegan
+  - r-fs
   - r-optparse
-  - bioconductor-treeio
+  - r-visnetwork
+  - r-ggdendro
+  - r-ape
+  - r-gridextra
+  - r-tidyverse
+  - r-ggrepel
+  - r=4.1
+  - r-vegan
+  - cmake
+  - r-igraph
+  - r-later
+  - r-pacman
+  - r-purrr
+  - r-sparsem
+  - r-rcpp
+  - r-plotly
+  - r-rcppeigen

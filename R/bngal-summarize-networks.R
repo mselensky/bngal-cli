@@ -10,9 +10,7 @@ option_list = list(
   optparse::make_option(c("-m", "--metadata"),
                         help = "(Required) Sample metadata corresponding to asv_table. Must be a .CSV file with sample identifiers in a column named `sample-id.`"),
   optparse::make_option(c("-w", "--network_dir"),
-                        help = "(Required) Input network data. Should be parent folder of output from bngal-build-nets"),
-  optparse::make_option(c("-o", "--output"),
-                        help = "(Required) Output directory for network summary graphs and data."),
+                        help = "(Required) Input network data. Should be parent folder of output from bngal-build-nets. Output subfolders will write here as well."),
   optparse::make_option(c("-n", "--subnetworks"), default = NULL,
                         help = "Metadata column by which to split data in order to create separate networks.
                         * If not provided, bngal will create a single network from the input ASV table.
@@ -31,12 +29,12 @@ option_list = list(
 opt_parser = OptionParser(option_list=option_list)
 opt = parse_args(opt_parser)
 
-if (is.null(opt$asv_table) | is.null(opt$metadata) | is.null(opt$network_dir) | is.null(opt$output)){
+if (is.null(opt$asv_table) | is.null(opt$metadata) | is.null(opt$network_dir)){
   print_help(opt_parser)
   stop("[", Sys.time(), "] At least one required argument is missing. See help above for more information.")
 }
 
-logfile_name = file.path(opt$output, "bngal-summarize-networks.log")
+logfile_name = file.path(opt$network_dir, "bngal-summarize-networks.log")
 msg <- file(logfile_name, open = "a")
 sink(file = msg,
      append = FALSE,
@@ -65,7 +63,9 @@ __________________________________________________________
 
         ")
 
-pacman::p_load(tidyverse, parallel, ggpubr, grid, gridExtra, viridis, treeio, ggtree, vegan)
+pacman::p_load(tidyverse, parallel, ggpubr, grid, gridExtra, viridis, vegan,
+               ggdendro)
+               #treeio, ggtree)
 library(bngal)
 
 # inputs
@@ -75,7 +75,7 @@ metadata = read_csv(opt$metadata, col_types = cols())
 asv_table = read_csv(asv.table, col_types = cols()) %>%
   filter(`sample-id` %in% unique(metadata$`sample-id`))
 sub.comm.column=opt$subnetworks
-out.dr = opt$output
+out.dr = opt$network_dir
 ebc.comp.fill = opt$fill_ebc_by
 metadata.cols = ebc.comp.fill
 NCORES = opt$cores
@@ -145,7 +145,7 @@ out <- parallel::mclapply(X = tax.levels,
                                                            ebc.nodes.abun = ebc_comps,
                                                            tax.level = x,
                                                            out.dr = out.dr)
-                            },
+                          },
                           mc.cores = NCORES)
 message(" | [", Sys.time(), "] EBC and taxonomic abundance data exported to\n |   * ", file.path(out.dr, "network-summary-tables"))
 Sys.sleep(3)
@@ -155,35 +155,64 @@ dendros <- bngal::build_dendrograms(binned.taxonomy = binned_tax,
                                     color.by = ebc.comp.fill,
                                     trans = "log10",
                                     sub.comms = sub.comm.column)
-message(" | [", Sys.time(), "] Dendrograms constructed")
 
 Sys.sleep(3)
+taxa.plots=list()
+
+# # testing what
+# for (i in c("family", "genus", "asv")) {
+#   # taxa.plots[[i]][["grouping"]] <- build_taxa.barplot(plotdata = ebc_comps,
+#   #                                            tax.level = i,
+#   #                                            dendrogram = dendros,
+#   #                                            fill.by = "grouping",
+#   #                                            interactive = opt$interactive,
+#   #                                            out.dr = out.dr,
+#   #                                            metadata.cols = metadata.cols)
+#   # taxa.plots[[i]][["phylum"]] <- build_taxa.barplot(plotdata = ebc_comps,
+#   #                                                     tax.level = i,
+#   #                                                     dendrogram = dendros,
+#   #                                                     fill.by = "phylum",
+#   #                                                     interactive = F,
+#   #                                                     out.dr = out.dr,
+#   #                                                     metadata.cols = metadata.cols)
+#   taxa.plots[[i]][["ebc"]] <- build_taxa.barplot(plotdata = ebc_comps,
+#                                                     tax.level = i,
+#                                                     dendrogram = dendros,
+#                                                     fill.by = "ebc",
+#                                                     interactive = F,
+#                                                     out.dr = out.dr,
+#                                                     metadata.cols = metadata.cols)
+#
+# }
 
 for (i in tax.levels) {
   for (x in c("phylum", "ebc")) {
     suppressWarnings(
-      build_taxa.barplot(plotdata = ebc_comps,
+      taxa.plots[[i]][[x]] <- build_taxa.barplot(plotdata = ebc_comps,
                          tax.level = i,
                          dendrogram = dendros,
                          fill.by = x,
+                         interactive = F,
+                         out.dr = out.dr,
+                         metadata.cols = metadata.cols)
+    )
+  }
+
+  if (i %in% c("family", "genus", "asv")) {
+    suppressWarnings(
+      taxa.plots[[i]][[x]] <- build_taxa.barplot(plotdata = ebc_comps,
+                         tax.level = i,
+                         dendrogram = dendros,
+                         fill.by = "grouping",
                          interactive = opt$interactive,
                          out.dr = out.dr,
                          metadata.cols = metadata.cols)
     )
   }
+
 }
 
-for (i in c("family", "genus", "asv")) {
-  suppressWarnings(
-    build_taxa.barplot(plotdata = ebc_comps,
-                       tax.level = i,
-                       dendrogram = dendros,
-                       fill.by = "grouping",
-                       interactive = opt$interactive,
-                       out.dr = out.dr,
-                       metadata.cols = metadata.cols)
-    )
-}
 
 out.dr.taxa.bp = file.path(out.dr, "taxa-barplots")
 message(" | [", Sys.time(), "] Exported summary barplots to:\n |   ", file.path(out.dr.taxa.bp))
+message(" | [", Sys.time(), "] bngal-summarize-nets complete!")

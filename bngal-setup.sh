@@ -8,8 +8,8 @@ conda env create -f bngal.yml
 source activate bngal
 
 # export Rscript pipelines to bngal bin
-cp R/bngal-build-networks.R ${CONDA_PREFIX}/bin/bngal-build-networks.R 
-cp R/bngal-summarize-networks.R ${CONDA_PREFIX}/bin/bngal-summarize-networks.R 
+cp R/bngal-build-networks.R ${CONDA_PREFIX}/bin/bngal-build-networks.R
+cp R/bngal-summarize-networks.R ${CONDA_PREFIX}/bin/bngal-summarize-networks.R
 
 # save as aliases
 alias_name1="alias bngal-build-nets='Rscript --vanilla ${CONDA_PREFIX}/bin/bngal-build-networks.R'"
@@ -17,7 +17,7 @@ alias_name2="alias bngal-summarize-nets='Rscript --vanilla ${CONDA_PREFIX}/bin/b
 
 # add bngal aliases to user shell profiles
 if [[ "$OSTYPE" == "darwin"* ]] || [[ "$OSTYPE" == "linux-gnu"* ]]; then
-	
+
 	# output depends on zsh shell or bash
 	if [[ "$SHELL" == "/bin/zsh" ]] && [[ $(grep -e "${alias_name1}" ~/.zshrc | wc -l | xargs) == 0 ]] && [[ $(grep -e "${alias_name2}" ~/.zshrc | wc -l | xargs) == 0 ]]
 	then
@@ -36,11 +36,11 @@ elif [[ "$OSTYPE" == "win"* ]]; then
 	echo ${alias_name1} >> $windows_path
 	echo ${alias_name2} >> $windows_path
 
-else 
+else
 	echo "Error: OS not supported :("
 fi
 
-source activate bngal
+conda activate bngal
 
-# 4. double check R package depedency installations and install bngal R package from GitHub
-Rscript --vanilla R/install-R-pkgs.R > R-pkgs-install.log
+# double check R package depedency installations and install bngal R package from GitHub
+Rscript --vanilla R/install-R-pkgs.R &> R-pkgs-install.log
