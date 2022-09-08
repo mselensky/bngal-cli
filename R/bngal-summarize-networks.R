@@ -110,7 +110,7 @@ message(" | [", Sys.time(), "] Node data extracted")
 alpha_diversity <- bngal::get_alpha.div(binned.taxonomy = binned_tax)
 message(" | [", Sys.time(), "] Alpha diversity calculated")
 
-# calcuate edge between cluster compositions and abundance
+# calculate edge between cluster compositions and abundance
 ebc_comps <- parallel::mclapply(X = tax.levels,
                                 FUN = function(i){
                                   bngal::ebc_compositions(ebc.nodes = ebc_nodes,
@@ -157,34 +157,8 @@ dendros <- bngal::build_dendrograms(binned.taxonomy = binned_tax,
                                     sub.comms = sub.comm.column)
 
 Sys.sleep(3)
+
 taxa.plots=list()
-
-# # testing what
-# for (i in c("family", "genus", "asv")) {
-#   # taxa.plots[[i]][["grouping"]] <- build_taxa.barplot(plotdata = ebc_comps,
-#   #                                            tax.level = i,
-#   #                                            dendrogram = dendros,
-#   #                                            fill.by = "grouping",
-#   #                                            interactive = opt$interactive,
-#   #                                            out.dr = out.dr,
-#   #                                            metadata.cols = metadata.cols)
-#   # taxa.plots[[i]][["phylum"]] <- build_taxa.barplot(plotdata = ebc_comps,
-#   #                                                     tax.level = i,
-#   #                                                     dendrogram = dendros,
-#   #                                                     fill.by = "phylum",
-#   #                                                     interactive = F,
-#   #                                                     out.dr = out.dr,
-#   #                                                     metadata.cols = metadata.cols)
-#   taxa.plots[[i]][["ebc"]] <- build_taxa.barplot(plotdata = ebc_comps,
-#                                                     tax.level = i,
-#                                                     dendrogram = dendros,
-#                                                     fill.by = "ebc",
-#                                                     interactive = F,
-#                                                     out.dr = out.dr,
-#                                                     metadata.cols = metadata.cols)
-#
-# }
-
 for (i in tax.levels) {
   for (x in c("phylum", "ebc")) {
     suppressWarnings(
@@ -192,7 +166,7 @@ for (i in tax.levels) {
                          tax.level = i,
                          dendrogram = dendros,
                          fill.by = x,
-                         interactive = F,
+                         interactive = opt$interactive,
                          out.dr = out.dr,
                          metadata.cols = metadata.cols)
     )
@@ -214,5 +188,5 @@ for (i in tax.levels) {
 
 
 out.dr.taxa.bp = file.path(out.dr, "taxa-barplots")
-message(" | [", Sys.time(), "] Exported summary barplots to:\n |   ", file.path(out.dr.taxa.bp))
+message(" | [", Sys.time(), "] Exported summary barplots to:\n |   * ", file.path(out.dr.taxa.bp))
 message(" | [", Sys.time(), "] bngal-summarize-nets complete!")
