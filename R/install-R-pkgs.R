@@ -2,6 +2,8 @@ if (!require("pacman")) install.packages("pacman", repos="https://cran.r-project
 if (!require("BiocManager")) install.packages("BiocManager", repos="https://cran.r-project.org/")
 
 message(" | ", Sys.time(), " Verifying conda installation for R package dependencies...")
+
+pacman::p_load(tidyverse, later, parallel, optparse, purrr, visNetwork, ggpubr, grid, gridExtra, vegan, plotly, ggrepel, viridis, igraph, Hmisc)
 library(tidyverse)
 library(later)
 library(parallel)
