@@ -4,7 +4,7 @@ pacman::p_load(optparse)
 ##### define cli options #####
 option_list = list(
   optparse::make_option(c("-a", "--asv_table"),
-                        help = "(Required) ASV count table named by Silva-138 L7 taxonomies. Ideally rarefied and filtered as necessary.
+                        help = "(Required) ASV count table named by Silva- or GTDB-style taxonomies (i.e., d__DOMAIN;p__PHYLUM;c__CLASS;o__ORDER;f__FAMILY;g__GENUS;s__SPECIES). Ideally rarefied and filtered as necessary.
                         * First column must be named 'sample-id' and must contain unique identifiers.
                         * Must be an absolute abundance ASV table."),
   optparse::make_option(c("-m", "--metadata"),
@@ -22,7 +22,7 @@ option_list = list(
                         help = "Determines whether output EBC composition plots are exported as interactive HTMLs (TRUE) or static PDFs (FALSE)
                         * Default = %default"),
   optparse::make_option(c("-x", "--cores"), default = 1,
-                        help = "Number of CPUs to use. Can only parallelize on Mac or Linux OS. Currently, bngal can only run on multiple cores when sub_comm_col is provided.
+                        help = "Number of CPUs to use. Can only parallelize on Mac or Linux OS. Currently, bngal can only run on multiple cores when --subnetworks is provided.
                         * Default = %default")
 )
 

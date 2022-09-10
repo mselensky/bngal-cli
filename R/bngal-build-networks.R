@@ -4,7 +4,7 @@ pacman::p_load(optparse)
 ##### define cli options #####
 option_list = list(
   optparse::make_option(c("-a", "--asv_table"),
-                        help = "(Required) ASV count table named by Silva-138 L7 taxonomies. Ideally rarefied and filtered as necessary.
+                        help = "(Required) ASV count table named by Silva- or GTDB-style taxonomies (i.e., d__DOMAIN;p__PHYLUM;c__CLASS;o__ORDER;f__FAMILY;g__GENUS;s__SPECIES). Ideally rarefied and filtered as necessary.
                         * First column must be named 'sample-id' and must contain unique identifiers.
                         * Must be an absolute abundance ASV table."),
   optparse::make_option(c("-m", "--metadata"),
