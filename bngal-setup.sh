@@ -31,7 +31,7 @@ if [[ "$OSTYPE" == "darwin"* ]] || [[ "$OSTYPE" == "linux-gnu"* ]]; then
 		source ~/.bashrc
 	fi
 # if Windows, append to bash shell (cli tool not supported in other shells)
-elif [[ "$OSTYPE" == "win"* ]]; then
+elif [[ "$OSTYPE" == "win"* ]] || [[ "$OSTYPE" == "msys" ]]; then
 	windows_path="C:\Program Files\Git\bin\bash.exe"
 	echo ${alias_name1} >> $windows_path
 	echo ${alias_name2} >> $windows_path

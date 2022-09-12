@@ -188,5 +188,5 @@ for (i in tax.levels) {
 
 
 out.dr.taxa.bp = file.path(out.dr, "taxa-barplots")
-message(" | [", Sys.time(), "] Exported summary barplots to:\n |   * ", file.path(out.dr.taxa.bp))
+message(" | [", Sys.time(), "] Exported summary barplots to:\n |   * ", out.dr.taxa.bp)
 message(" | [", Sys.time(), "] bngal-summarize-nets complete!")
