@@ -12,8 +12,8 @@ cp R/bngal-build-networks.R ${CONDA_PREFIX}/bin/bngal-build-networks.R
 cp R/bngal-summarize-networks.R ${CONDA_PREFIX}/bin/bngal-summarize-networks.R
 
 # save as functions
-function_name1="bngal-build-nets () { Rscript --vanilla ${CONDA_PREFIX}/bin/bngal-build-networks.R }"
-function_name2="bngal-summarize-nets () { Rscript --vanilla ${CONDA_PREFIX}/bin/bngal-summarize-networks.R }"
+function_name1='bngal-build-nets () { Rscript --vanilla ${CONDA_PREFIX}/bin/bngal-build-networks.R "$@" }'
+function_name2='bngal-summarize-nets () { Rscript --vanilla ${CONDA_PREFIX}/bin/bngal-summarize-networks.R "$@" }'
 
 # add bngal functions to user shell profiles
 if [[ "$OSTYPE" == "darwin"* ]] || [[ "$OSTYPE" == "linux-gnu"* ]]; then
@@ -31,13 +31,11 @@ if [[ "$OSTYPE" == "darwin"* ]] || [[ "$OSTYPE" == "linux-gnu"* ]]; then
 		source ~/.bashrc
 	fi
 # if Windows, append to bash shell (cli tool not supported in other shells)
-elif [[ "$OSTYPE" == "win"* ]] || [[ "$OSTYPE" == "msys" ]]; then
-	windows_path="C:\Program Files\Git\bin\bash.exe"
-	echo ${function_name1} >> $windows_path
-	echo ${function_name2} >> $windows_path
-
+# elif [[ "$OSTYPE" == "win"* ]] || [[ "$OSTYPE" == "msys" ]]; then
+# 	echo ${function_name1} >> /c/Users/${USERNAME}/.bashrc
+# 	echo ${function_name2} >> /c/Users/${USERNAME}/.bashrc
 else
-	echo "Error: OS not supported :("
+	echo "Error: bngal is only supported by Linux and MacOS :( If you are using Windows, try running bngal on Windows Subsystem for Linux or a virtual machine"
 fi
 
 conda activate bngal
