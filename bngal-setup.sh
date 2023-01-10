@@ -2,6 +2,26 @@
 
 #### bngal setup script ####
 
+printf "
+___________________________________________________
+
+    ██████╗ ███╗   ██╗ ██████╗  █████╗ ██╗
+    ██╔══██╗████╗  ██║██╔════╝ ██╔══██╗██║
+    ██████╔╝██╔██╗ ██║██║  ███╗███████║██║
+    ██╔══██╗██║╚██╗██║██║   ██║██╔══██║██║
+    ██████╔╝██║ ╚████║╚██████╔╝██║  ██║███████╗
+    ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝    
+  Biological Network Graph Analysis and Learning   
+            (c) Matt Selensky 2023
+            e: mselensky@gmail.com
+      https://github.com/mselensky/bngal
+
+___________________________________________________
+
+-- . --- .-- -- . --- .-- -- . --- .-- -- . --- .--
+      -.. .- .--. .... -. . / --. .. .-. .-..      
+"
+
 # 1. create bngal conda environment
 conda env create -f bngal.yml
 
@@ -12,8 +32,8 @@ cp R/bngal-build-networks.R ${CONDA_PREFIX}/bin/bngal-build-networks.R
 cp R/bngal-summarize-networks.R ${CONDA_PREFIX}/bin/bngal-summarize-networks.R
 
 # save as functions
-function_name1='bngal-build-nets () { Rscript --vanilla ${CONDA_PREFIX}/bin/bngal-build-networks.R "$@" }'
-function_name2='bngal-summarize-nets () { Rscript --vanilla ${CONDA_PREFIX}/bin/bngal-summarize-networks.R "$@" }'
+function_name1='bngal-build-nets () { Rscript --vanilla ${CONDA_PREFIX}/bin/bngal-build-networks.R "$@" ; }'
+function_name2='bngal-summarize-nets () { Rscript --vanilla ${CONDA_PREFIX}/bin/bngal-summarize-networks.R "$@" ; }'
 
 # add bngal functions to user shell profiles
 if [[ "$OSTYPE" == "darwin"* ]] || [[ "$OSTYPE" == "linux-gnu"* ]]; then
