@@ -10,7 +10,9 @@ option_list = list(
   optparse::make_option(c("-m", "--metadata"),
                         help = "(Required) Sample metadata corresponding to asv_table. Must be a .CSV file with sample identifiers in a column named `sample-id.`"),
   optparse::make_option(c("-w", "--network_dir"),
-                        help = "(Required) Input network data. Should be parent folder of output from bngal-build-nets. Output subfolders will write here as well."),
+                        help = "(Required) Input network data. Should be parent folder of `bngal-build-nets` output. Output subfolders will write here as well unless --output is specified."),
+  optparse::make_option(c("-o", "--output"), default = NULL,
+                        help = "Optional output folder. May be useful if one desires to test multiple `-f` inputs on the same network data."),
   optparse::make_option(c("-n", "--subnetworks"), default = NULL,
                         help = "Metadata column by which to split data in order to create separate networks.
                         * If not provided, bngal will create a single network from the input ASV table.
@@ -41,24 +43,27 @@ sink(file = msg,
      type = "message")
 
 message("
-___________________________________________________
+__________________________________________________________
+                  Welcome to BNGAL!
 
-    ██████╗ ███╗   ██╗ ██████╗  █████╗ ██╗
-    ██╔══██╗████╗  ██║██╔════╝ ██╔══██╗██║
-    ██████╔╝██╔██╗ ██║██║  ███╗███████║██║
-    ██╔══██╗██║╚██╗██║██║   ██║██╔══██║██║
-    ██████╔╝██║ ╚████║╚██████╔╝██║  ██║███████╗
-    ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝    
-  Biological Network Graph Analysis and Learning   
-            (c) Matt Selensky 2023
-            e: mselensky@gmail.com
-      https://github.com/mselensky/bngal
+      Biological Network Graph Analysis and Learning
+               (c) Matt Selensky 2023
 
-___________________________________________________
+        ██████╗ ███╗   ██╗ ██████╗  █████╗ ██╗
+        ██╔══██╗████╗  ██║██╔════╝ ██╔══██╗██║
+        ██████╔╝██╔██╗ ██║██║  ███╗███████║██║
+        ██╔══██╗██║╚██╗██║██║   ██║██╔══██║██║
+        ██████╔╝██║ ╚████║╚██████╔╝██║  ██║███████╗
+        ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝
+         https://github.com/mselensky/bngal
+               e: mselensky@gmail.com
 
--- . --- .-- -- . --- .-- -- . --- .-- -- . --- .--
-      -.. .- .--. .... -. . / --. .. .-. .-..      
-")
+__________________________________________________________
+
+   -- . --- .-- -- . --- .-- -- . --- .-- -- . --- .--
+         -.. .- .--. .... -. . / --. .. .-. .-..
+
+        ")
 
 pacman::p_load(tidyverse, parallel, ggpubr, grid, gridExtra, viridis, vegan,
                ggdendro)
@@ -72,10 +77,15 @@ metadata = read_csv(opt$metadata, col_types = cols())
 asv_table = read_csv(asv.table, col_types = cols()) %>%
   filter(`sample-id` %in% unique(metadata$`sample-id`))
 sub.comm.column=opt$subnetworks
-out.dr = opt$network_dir
 ebc.comp.fill = opt$fill_ebc_by
 metadata.cols = ebc.comp.fill
 NCORES = opt$cores
+# output will write to input folder by default unless --output is defined
+if (is.null(opt$output)) {
+  out.dr = opt$network_dir
+} else {
+  out.dr = opt$output
+}
 
 tax.levels = c("phylum", "class", "order", "family", "genus", "asv")
 
