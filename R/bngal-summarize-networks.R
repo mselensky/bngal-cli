@@ -135,15 +135,19 @@ message(" | [", Sys.time(), "] EBC compositions calculated")
 out.dr.taxa.bp = file.path(out.dr, "taxa-barplots")
 if (!dir.exists(out.dr.taxa.bp)) dir.create(out.dr.taxa.bp, recursive = TRUE)
 
-for (i in tax.levels) {
-  core_comps <- bngal::plot_core_comp(ebc_comps, i, metadata, fill.by = ebc.comp.fill)
-  suppressMessages(
-    ggplot2::ggsave(file.path(out.dr.core, paste0(i, "-filled.by-", ebc.comp.fill, ".pdf")),
-                    core_comps,
-                    device = "pdf")
-  )
+if (!is.null(ebc.comp.fill)) {
+  for (i in tax.levels) {
+    core_comps <- bngal::plot_core_comp(ebc_comps, i, metadata, fill.by = ebc.comp.fill)
+    suppressMessages(
+      ggplot2::ggsave(file.path(out.dr.core, paste0(i, "-filled.by-", ebc.comp.fill, ".pdf")),
+                      core_comps,
+                      device = "pdf")
+    )
+  }
+  message(" | [", Sys.time(), "] EBC composition plots exported to\n |   * ", out.dr.core)
+} else {
+  message(" | [", Sys.time(), "] No --fill_by_ebc option found; skipping EBC composition plots")
 }
-message(" | [", Sys.time(), "] EBC composition plots exported to\n |   * ", out.dr.core)
 
 # output summary data for each level of taxonomic classification
 out <- parallel::mclapply(X = tax.levels,
