@@ -1,12 +1,14 @@
+#!/usr/bin/env Rscript
+
 # load required packages
 suppressMessages(if (!require("pacman")) install.packages("pacman", repos="https://cran.r-project.org/"))
 pacman::p_load(optparse)
 ##### define cli options #####
 option_list = list(
   optparse::make_option(c("-a", "--asv_table"),
-                        help = "(Required) ASV count table named by Silva- or GTDB-style taxonomies (i.e., d__DOMAIN;p__PHYLUM;c__CLASS;o__ORDER;f__FAMILY;g__GENUS;s__SPECIES). Ideally rarefied and filtered as necessary.
+                        help = "(Required) Taxonomic count table named by Silva- or GTDB-style taxonomies (i.e., d__DOMAIN;p__PHYLUM;c__CLASS;o__ORDER;f__FAMILY;g__GENUS;s__SPECIES). Ideally rarefied and filtered as necessary.
                         * First column must be named 'sample-id' and must contain unique identifiers.
-                        * Must be an absolute abundance ASV table."),
+                        * Must be an absolute abundance table."),
   optparse::make_option(c("-m", "--metadata"),
                         help = "(Required) Sample metadata corresponding to asv_table. Must be a .CSV file with sample identifiers in a column named `sample-id.`"),
   optparse::make_option(c("-o", "--output"),
@@ -92,11 +94,12 @@ ___________________________________________________
 # load packages
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(dplyr))
-pacman::p_load(parallel, tidyr, #plyr,
+pacman::p_load(parallel, tidyr,
                Hmisc, RColorBrewer, igraph,
                visNetwork, ggpubr, grid, gridExtra, plotly,
-               purrr, viridis, optparse)
-if (!require("bngal")) pacman::p_install_gh("mselensky/bngal")
+               purrr, viridis)
+library(bngal)
+#if (!require("bngal")) pacman::p_install_gh("mselensky/bngal")
 
 # create output directory
 out.dr = opt$output
@@ -146,7 +149,7 @@ message(" | \\\\\\ Input parameters \\\\\\ | \n",
 
 for (tax_level in tax_levels) {
 
-  message(" | .\n | .\n | _____________________________________________________________________\n",
+  message(" | .\n | .\n | .\n | .\n | _____________________________________________________________________\n",
           " | [", Sys.time(), "] Building networks for ", tax_level, "-level taxa...")
 
   ##### Pipeline #####
@@ -306,34 +309,6 @@ for (tax_level in tax_levels) {
   )
   message(" | [", Sys.time(), "] export_network_data() complete")
   t14 <- Sys.time()
-
-  message(
-    " | ______________________///////////////_______________________\n",
-    " |                      /RUNTIME TABLE/\n",
-    " | ____________________///////////////_________________________\n",
-    " | \n",
-    " | \\\\   taxonomic level  : ", tax_level, "\n",
-    " |  \\\\  cores requested  : ", opt$cores,"\n",
-    " |   \\\\ subcommunities by: ", sub.comm.column, "\n",
-    " | \n",
-    " | function                               time              \n",
-    " | ------------------------------------------------------------\n",
-    " | bngal::bin_taxonomy                  | ", format(t1-t0), "\n",
-    " | bngal::prepare_network_data          | ", format(t2-t1), "\n",
-    " | bngal::prepare_corr_data             | ", format(t3-t2), "\n",
-    " | bngal::corr_matrix                   | ", format(t4-t3), "\n",
-    " | bngal::get_node_ids                  | ", format(t5-t4), "\n",
-    " | bngal::generate_edges                | ", format(t6-t5), "\n",
-    " | bngal::prepro_net_features           | ", format(t7-t6), "\n",
-    " | bngal::get_igraph                    | ", format(t8-t7), "\n",
-    " | bngal::get_edge_betweenness          | ", format(t9-t8), "\n",
-    " | bngal::get_ebc_member_ids            | ", format(t10-t9), "\n",
-    " | bngal::get_ebc_clusters              | ", format(t11-t10), "\n",
-    " | bngal::node_color_data               | ", format(t12-t11), "\n",
-    " | bngal::plot_networks                 | ", format(t13-t12), "\n",
-    " | bngal::export_network_data           | ", format(t14-t13), "\n",
-    " | ------------------------------------------------------------\n"
-  )
 
   names <- c(
     "bngal::bin_taxonomy",
