@@ -5,40 +5,40 @@ channels:
   - r
   - defaults
 dependencies:
-  - r-evaluate
-  - r-pkgload
-  - r-scales
-  - zlib
-  - r=4.1
-  - r-vegan
-  - r-gridextra
-  - r-praise
-  - nlopt
-  - r-waldo
-  - r-hmisc
-  - r-ggpubr
+  - r-rcppeigen
   - r-later
+  - r-visnetwork
+  - r-evaluate
+  - zlib
+  - cmake
+  - r-hmisc
+  - r-diffobj
+  - nlopt
+  - r-plotly
+  - r-brio
+  - r-scales
+  - r-ggrepel
   - r-curl
+  - r-testthat
+  - r-ggpubr
+  - r-desc
+  - r-optparse
+  - pandoc=2.18
+  - r-waldo
+  - r-gridextra
+  - r-ggdendro
+  - r-pkgload
+  - r-praise
+  - r=4.2
+  - r-vegan
+  - r-viridis
+  - r-ape
+  - r-sparsem
   - r-rcpp
   - r-pacman
-  - r-igraph
-  - r-visnetwork
-  - r-optparse
-  - r-purrr
-  - r-ggrepel
-  - r-viridis
-  - r-ggdendro
-  - r-rprojroot
-  - pandoc=2.18
-  - r-testthat
-  - r-diffobj
-  - cmake
-  - r-rcppeigen
-  - r-brio
-  - r-ape
-  - r-rcolorbrewer
-  - r-tidyverse
-  - r-sparsem
   - r-fs
-  - r-desc
-  - r-plotly
+  - r-purrr
+  - r-tidyverse
+  - r-rcolorbrewer
+  - r-igraph
+  - r-rprojroot
