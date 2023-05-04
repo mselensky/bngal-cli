@@ -215,8 +215,8 @@ coocc <- parallel::mclapply(names(split.nodes),
                               bngal::summarize_cooccurrence(nodes. = split.nodes[[i]],
                                                             edges. = edges[[i]],
                                                             tax.level = tax_level)
-                            }
-)
+                              },
+                            mc.cores = NCORES)
 names(coocc) = names(split.nodes)
 
 # reimport ebc_taxa_summary results
@@ -371,11 +371,13 @@ xions_plot <- joined.coocc %>%
   ggtitle(label = paste0(tax_level, "-level connections summarized by phylum"),
           subtitle = "Darker bars = positive connection. Faded bars = negative connections.\nLabels = number of unique taxa within phylum.")
 
+# export plots and data
 if (!dir.exists(file.path(out.dr, "connectivity_plots"))) dir.create(file.path(out.dr, "connectivity_plots"))
-
 ggsave(file.path(out.dr, "connectivity_plots", paste0(tax_level, "_connections_plot.pdf")),
        xions_plot,
        device = "pdf", width = 8.5, height = 11)
+write.csv(taxa_spread,
+          file = file.path(out.dr, "connectivity_plots", paste0(tax_level, "_connections_data.csv")))
 
 message(" | [", Sys.time(), "] Exported summary plots.")
 message(" | [", Sys.time(), "] bngal-summarize-nets complete!")
