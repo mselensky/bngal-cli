@@ -93,7 +93,7 @@ __________________________________________________________
 
 pacman::p_load(tidyverse, parallel, ggpubr, grid, gridExtra, viridis, vegan,
                ggdendro)
-library(bngal, lib.loc = "/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library")
+library(bngal)
 
 # inputs
 network_dir = file.path(opt$network_dir, "network-data")
@@ -364,7 +364,7 @@ xions_plot <- joined.coocc %>%
                label = n_phy)) +
   facet_wrap(~sub_comm) +
   scale_fill_manual(values = phylum.color.scheme) +
-  xlab("connectivity (# nodes / # edges)") +
+  xlab("connectivity (# edges / # nodes)") +
   theme_bw() +
   theme(legend.position = "none",
         axis.title.y = element_blank()) +
@@ -376,8 +376,9 @@ if (!dir.exists(file.path(out.dr, "connectivity_plots"))) dir.create(file.path(o
 ggsave(file.path(out.dr, "connectivity_plots", paste0(tax_level, "_connections_plot.pdf")),
        xions_plot,
        device = "pdf", width = 8.5, height = 11)
-write.csv(taxa_spread,
-          file = file.path(out.dr, "connectivity_plots", paste0(tax_level, "_connections_data.csv")))
+write.csv(joined.coocc,
+          file = file.path(out.dr, "connectivity_plots", paste0(tax_level, "_connections_data.csv")),
+          row.names = FALSE)
 
 message(" | [", Sys.time(), "] Exported summary plots.")
 message(" | [", Sys.time(), "] bngal-summarize-nets complete!")

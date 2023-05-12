@@ -22,6 +22,11 @@ ___________________________________________________
       -.. .- .--. .... -. . / --. .. .-. .-..      
 "
 
+conda config --add channels defaults
+conda config --add channels r 
+conda config --add channels bioconda
+conda config --add channels conda-forge
+
 # create bngal conda environment
 conda env create -f bngal.yml
 source activate bngal
