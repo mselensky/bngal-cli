@@ -37,7 +37,7 @@ cp R/bngal-summarize-networks.R ${CONDA_PREFIX}/bin/bngal-summarize-nets
 chmod +x ${CONDA_PREFIX}/bin/bngal-build-nets
 chmod +x ${CONDA_PREFIX}/bin/bngal-summarize-nets
 
-R -e "if (!require('bngal')) pacman::p_install_gh('mselensky/bngal')" &> R-pkgs-install.log
+R -e 'if (!require("bngal")) pacman::p_install_gh("mselensky/bngal")' &> R-pkgs-install.log
 
 # double check R package depedency installations and install bngal R package from GitHub
 # Rscript --vanilla R/install-R-pkgs.R &> R-pkgs-install.log
