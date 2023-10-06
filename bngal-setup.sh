@@ -22,14 +22,17 @@ ___________________________________________________
       -.. .- .--. .... -. . / --. .. .-. .-..      
 "
 
+eval "$(conda shell.bash hook)"
+
 conda config --add channels defaults
 conda config --add channels r 
 conda config --add channels bioconda
 conda config --add channels conda-forge
 
 # create bngal conda environment
+
 conda env create -f bngal.yml
-source activate bngal
+conda activate bngal
 
 # export Rscript pipelines as executables to bngal bin
 cp R/bngal-build-networks.R ${CONDA_PREFIX}/bin/bngal-build-nets
