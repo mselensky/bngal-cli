@@ -23,7 +23,7 @@ dependencies:
   - r-ggpubr
   - r-desc
   - r-optparse
-  - pandoc=2.18
+  - pandoc
   - r-waldo
   - r-gridextra
   - r-ggdendro
