@@ -98,6 +98,7 @@ library(bngal)
 # inputs
 network_dir = file.path(opt$network_dir, "network-data")
 asv.table = opt$asv_table
+colnames(asv_table) <- gsub(" ", "", colnames(asv_table)) # remove spaces
 metadata = read_csv(opt$metadata, col_types = cols())
 asv_table = read_csv(asv.table, col_types = cols()) %>%
   filter(`sample-id` %in% unique(metadata$`sample-id`))
@@ -175,7 +176,7 @@ if (opt$skip_plotting == FALSE) {
   taxa.plots=list()
   for (x in c("phylum", "ebc")) {
     suppressWarnings(
-      taxa.plots[[x]] <- build_taxa.barplot(plotdata = ebc_comps,
+      taxa.plots[[x]] <- bngal::build_taxa.barplot(plotdata = ebc_comps,
                                             tax.level = tax_level,
                                             dendrogram = dendros,
                                             fill.by = x,
@@ -187,7 +188,7 @@ if (opt$skip_plotting == FALSE) {
 
   if (tax_level %in% c("family", "genus", "asv")) {
     suppressWarnings(
-      taxa.plots[[x]] <- build_taxa.barplot(plotdata = ebc_comps,
+      taxa.plots[[x]] <- bngal::build_taxa.barplot(plotdata = ebc_comps,
                                             tax.level = tax_level,
                                             dendrogram = dendros,
                                             fill.by = "grouping",

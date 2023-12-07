@@ -115,6 +115,7 @@ library(bngal)
 
 # map cli variables to script variables
 asv_table = read_csv(opt$asv_table, col_types = cols())
+colnames(asv_table) <- gsub(" ", "", colnames(asv_table)) # remove spaces
 metadata = read_csv(opt$metadata, col_types = cols())
 correlation = opt$correlation
 transformation = opt$transformation
@@ -205,7 +206,7 @@ node_ids <- bngal::get_node_ids(
 message(" | [", Sys.time(), "] get_node_ids() complete")
 
 t5=Sys.time()
-edges <- generate_edges(
+edges <- bngal::generate_edges(
   corr.matrix = corr_matrix,
   correlation = correlation,
   node.ids = node_ids
@@ -223,11 +224,11 @@ prepro_data <- bngal::prepare_net_features(
   sign = sign
 )
 # export final QC'd pairwise summary data to "pairwise-summary" output subfolder
-pw_summary(corr.data = corr_data,
-           preprocessed.features = prepro_data,
-           tax.level = tax_level,
-           out.dr = out.dr,
-           cores=NCORES)
+bngal::pw_summary(corr.data = corr_data,
+                  preprocessed.features = prepro_data,
+                  tax.level = tax_level,
+                  out.dr = out.dr,
+                  cores=NCORES)
 
 message(" | [", Sys.time(), "] prepro_net_features() complete")
 
@@ -274,7 +275,7 @@ t12 <- Sys.time()
 
 if (tax_level %in% c("family", "genus", "asv")) {
   # add color scheme from functional groupings inspired by Brankovits et al. (2017)
-  plot_networks(
+  bngal::plot_networks(
     node.color.data = node_color_data,
     filled.by = "other",
     graph.layout = graph_layout,
@@ -289,7 +290,7 @@ if (tax_level %in% c("family", "genus", "asv")) {
 
 # plot networks
 for (selected_By in c("phylum", "edge_btwn_cluster")) {
-  plot_networks(
+  bngal::plot_networks(
     node.color.data = node_color_data,
     filled.by = selected_By,
     graph.layout = graph_layout,
