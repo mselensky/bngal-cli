@@ -98,7 +98,7 @@ library(bngal)
 # inputs
 network_dir = file.path(opt$network_dir, "network-data")
 asv.table = opt$asv_table
-colnames(asv_table) <- gsub(" ", "", colnames(asv_table)) # remove spaces
+colnames(asv.table) <- gsub(" ", "", colnames(asv.table)) # remove spaces
 metadata = read_csv(opt$metadata, col_types = cols())
 asv_table = read_csv(asv.table, col_types = cols()) %>%
   filter(`sample-id` %in% unique(metadata$`sample-id`))
