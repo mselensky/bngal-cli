@@ -129,6 +129,8 @@ message(" | [", Sys.time(), "] Node data extracted")
 
 # default will plot the following
 if (opt$skip_plotting == FALSE) {
+  library(ggpubr)
+  library(ggdendro)
   # calculate shannon, simpson, and invsimpson for all levels of tax.
   alpha_diversity <- bngal::get_alpha.div(binned.taxonomy = binned_tax, tax.level = tax_level)
   message(" | [", Sys.time(), "] Alpha diversity calculated")
@@ -252,7 +254,8 @@ plot_xions <- function(taxa_spread, ebc.colors) {
     ggplot(aes(median_rel_abun*100, n_obs)) +
     geom_point(aes(fill = as.factor(edge_btwn_cluster),
                    size = total_xions),
-               shape = 21) +
+               shape = 21,
+               alpha = 0.7) +
     scale_fill_manual(values = ebc.colors) +
     guides(size = element_text("Degree")) +
     ylab("Prevalence") +
@@ -262,9 +265,15 @@ plot_xions <- function(taxa_spread, ebc.colors) {
 
 ebc.colors <- lapply(split.nodes,
                      ebc_legend_colors)
+
+# prevalence vs. relative abundance, sized by total connections and filled by EBC
+if (!dir.exists(file.path(out.dr, "node_prevalence_plots"))) dir.create(file.path(out.dr, "node_prevalence_plots"))
 out.plot = list()
 for (i in names(taxa_spread)) {
   out.plot[[i]] <- plot_xions(taxa_spread[[i]], ebc.colors[[i]])
+  ggsave(file.path(out.dr, "node_prevalence_plots", paste0(i, "-", tax_level, "-node_prevalence.pdf")),
+         out.plot[[i]],
+         device = "pdf", width = 8.5, height = 11)
 }
 for (i in names(coocc)) {
   coocc[[i]]$sub_comm = i
