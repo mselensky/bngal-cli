@@ -115,10 +115,10 @@ library(bngal)
 
 # map cli variables to script variables
 #asv_table = read_csv(opt$asv_table, col_types = cols())
+metadata = read_csv(opt$metadata, col_types = cols())
 asv_table = read.csv(opt$asv_table, check.names = FALSE) %>%
   filter(`sample-id` %in% unique(metadata$`sample-id`))
 colnames(asv_table) <- gsub(" ", "", colnames(asv_table)) # remove spaces
-metadata = read_csv(opt$metadata, col_types = cols())
 correlation = opt$correlation
 transformation = opt$transformation
 sign = opt$sign
