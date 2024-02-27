@@ -99,7 +99,7 @@ library(bngal)
 network_dir = file.path(opt$network_dir, "network-data")
 asv.table = opt$asv_table
 metadata = read_csv(opt$metadata, col_types = cols())
-asv_table = read_csv(asv.table, col_types = cols()) %>%
+asv_table = read.csv(asv.table, check.names = FALSE) %>%
   filter(`sample-id` %in% unique(metadata$`sample-id`))
 colnames(asv_table) <- gsub(" ", "", colnames(asv_table)) # remove spaces
 tax_level = opt$taxonomic_level
