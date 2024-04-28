@@ -94,7 +94,7 @@ ___________________________________________________
     ██████╔╝██║ ╚████║╚██████╔╝██║  ██║███████╗
     ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝
   Biological Network Graph Analysis and Learning
-            (c) Matt Selensky 2023
+            (c) Matt Selensky 2024
             e: mselensky@gmail.com
       https://github.com/mselensky/bngal
 
@@ -114,11 +114,10 @@ pacman::p_load(parallel, tidyr,
 library(bngal)
 
 # map cli variables to script variables
-#asv_table = read_csv(opt$asv_table, col_types = cols())
+metadata = read_csv(opt$metadata, col_types = cols())
 asv_table = read.csv(opt$asv_table, check.names = FALSE) %>%
   filter(`sample-id` %in% unique(metadata$`sample-id`))
 colnames(asv_table) <- gsub(" ", "", colnames(asv_table)) # remove spaces
-metadata = read_csv(opt$metadata, col_types = cols())
 correlation = opt$correlation
 transformation = opt$transformation
 sign = opt$sign
@@ -244,7 +243,8 @@ message(" | [", Sys.time(), "] get_igraph() complete")
 t8=Sys.time()
 
 ebcs <- bngal::get_edge_betweenness(
-  igraph_list
+  igraph.list = igraph_list,
+  num.cores = NCORES
 )
 message(" | [", Sys.time(), "] get_edge_betweenness() complete")
 
@@ -357,6 +357,8 @@ comms <- rep(sub.comm.column, length(times))
 system_info = Sys.info()
 sysname <- rep(system_info[['sysname']], length(times))
 release <- rep(system_info[['release']], length(times))
+end_runtime <- rep(Sys.time(), length(times))
+
 
 runtime_table <- data.frame('function_name' = names,
                             'times' = times,
@@ -364,7 +366,8 @@ runtime_table <- data.frame('function_name' = names,
                             'CPUs' = ncores,
                             'visNetwork_layout' = graph_layout,
                             'sysname' = sysname,
-                            'release' = release)
+                            'release' = release,
+                            'end_runtime' = end_runtime)
 
 if (!is.null(comms)) {
   runtime_table$num_subcommunities = comms

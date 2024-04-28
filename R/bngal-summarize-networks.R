@@ -39,7 +39,10 @@ option_list = list(
                         Be sure to use the full taxonomic ID as appropriate for the given taxonomic level as noted in the *taxa_spread.csv output in the network-summaries subfolder.
                         Multiple queries may be provided given space characters: 'Archaea;Crenarchaeota Bacteria;Actinobacteriota'
                         * Default = %default"),
-  optparse::make_option(c("-s", "--skip_plotting"), default = FALSE,
+  optparse::make_option(c("-s", "--tip_shape_by"), default = NULL,
+                        help = "Define the shape of the summary barplot's dendrogram tips by a metadata column.
+                        * Default = %default"),
+  optparse::make_option(c("-p", "--skip_plotting"), default = FALSE,
                         help = "Skip the plotting of taxonomic barplots and EBC composition plots. Useful if you want to test multiple --query inputs on the same data.
                         * Default = %default")
 )
@@ -73,7 +76,7 @@ __________________________________________________________
                   Welcome to BNGAL!
 
       Biological Network Graph Analysis and Learning
-               (c) Matt Selensky 2023
+               (c) Matt Selensky 2024
 
         ██████╗ ███╗   ██╗ ██████╗  █████╗ ██╗
         ██╔══██╗████╗  ██║██╔════╝ ██╔══██╗██║
@@ -105,6 +108,7 @@ colnames(asv_table) <- gsub(" ", "", colnames(asv_table)) # remove spaces
 tax_level = opt$taxonomic_level
 sub.comm.column=opt$subnetworks
 ebc.comp.fill = opt$fill_ebc_by
+shape_by = opt$tip_shape_by
 metadata.cols = ebc.comp.fill
 NCORES = opt$cores
 query = opt$query
@@ -171,6 +175,7 @@ if (opt$skip_plotting == FALSE) {
   dendros <- bngal::build_dendrograms(binned.taxonomy = binned_tax,
                                       metadata = metadata,
                                       color.by = ebc.comp.fill,
+                                      shape.by = shape_by,
                                       trans = "log10",
                                       sub.comms = sub.comm.column)
   Sys.sleep(1)
