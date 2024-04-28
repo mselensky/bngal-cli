@@ -114,10 +114,6 @@ pacman::p_load(parallel, tidyr,
 library(bngal)
 
 # map cli variables to script variables
-<<<<<<< HEAD
-=======
-#asv_table = read_csv(opt$asv_table, col_types = cols())
->>>>>>> b685edc0a58029b94edb1b448f43fc263554be03
 metadata = read_csv(opt$metadata, col_types = cols())
 asv_table = read.csv(opt$asv_table, check.names = FALSE) %>%
   filter(`sample-id` %in% unique(metadata$`sample-id`))
