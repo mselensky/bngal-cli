@@ -230,7 +230,7 @@ bngal::pw_summary(corr.data = corr_data,
                   preprocessed.features = prepro_data,
                   tax.level = tax_level,
                   out.dr = out.dr,
-                  cores=NCORES)
+                  num.cores=NCORES)
 
 message(" | [", Sys.time(), "] prepro_net_features() complete")
 
