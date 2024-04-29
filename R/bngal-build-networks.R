@@ -185,7 +185,8 @@ corr_data <- bngal::prepare_corr_data(
   prepared.data = prepared_data,
   obs.cutoff = obs.cutoff,
   out.dr = pw.out,
-  transformation = transformation
+  transformation = transformation,
+  num.cores = NCORES
 )
 message(" | [", Sys.time(), "] prepare_corr_data() complete")
 
