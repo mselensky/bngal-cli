@@ -193,8 +193,8 @@ message(" | [", Sys.time(), "] prepare_corr_data() complete")
 t3=Sys.time()
 corr_matrix <- bngal::corr_matrix(
   filtered.matrix = corr_data,
-  correlation = correlation#,
-  #cores = NCORES
+  correlation = correlation,
+  cores = NCORES
 )
 message(" | [", Sys.time(), "] corr_matrix() complete")
 
@@ -223,7 +223,8 @@ prepro_data <- bngal::prepare_net_features(
   p.val.cutoff = pval.cutoff,
   correlation = correlation,
   correlation.cutoff = correlation_cutoff,
-  sign = sign
+  sign = sign,
+  num.cores = NCORES
 )
 # export final QC'd pairwise summary data to "pairwise-summary" output subfolder
 bngal::pw_summary(corr.data = corr_data,
