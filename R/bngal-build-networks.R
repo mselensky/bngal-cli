@@ -118,6 +118,7 @@ metadata = read_csv(opt$metadata, col_types = cols())
 asv_table = read.csv(opt$asv_table, check.names = FALSE) %>%
   filter(`sample-id` %in% unique(metadata$`sample-id`))
 colnames(asv_table) <- gsub(" ", "", colnames(asv_table)) # remove spaces
+metadata = metadata[metadata$`sample-id` %in% unique(asv_table$`sample-id`),]
 correlation = opt$correlation
 transformation = opt$transformation
 sign = opt$sign
@@ -372,7 +373,7 @@ runtime_table <- data.frame('function_name' = names,
                             'end_runtime' = end_runtime)
 
 if (!is.null(comms)) {
-  runtime_table$num_subcommunities = comms
+  runtime_table$num_subcommunities = length(unique(metadata[[sub.comm.column]]))
 } else {
   runtime_table$num_subcommunities = rep(1, length(times))
 }
